@@ -1,17 +1,24 @@
-# 🧭 TopoToets – groep 7 van de Harlekijn
+# 📚 Groep 7 toetsen – de Harlekijn
+
+Oefentoetsen voor groep 7:
+
+- 🧭 **TopoToets**: https://niels9001.github.io/groep7-toetsen/
+- 🇬🇧 **English Words**: https://niels9001.github.io/groep7-toetsen/engels.html
+
+## 🧭 TopoToets
 
 Een topo-quiz met dezelfde kaart-en-antwoordenindeling. Tik op een gekleurd land, een stip voor een stad of eiland, of de lijn van de Po en kies rechts de juiste naam. Met de zoomknoppen kun je de kleine landen en dicht bij elkaar liggende steden beter bekijken.
 
-## Wat leer je?
+### Wat leer je?
 
 **Landen:** Zwitserland, Oostenrijk, Italië, Roemenië, Turkije, Irak en Iran
 
 **Steden:** Genève, Bern, Wenen, Milaan, Boekarest, Istanbul, Ankara, Bagdad en Teheran
 **Overig / wateren:** Po en Sicilië
 
-## 🇬🇧 English Words (aparte toets)
+## 🇬🇧 English Words
 
-Een woordjestoets Engels ↔ Nederlands: [`engels.html`](https://niels9001.github.io/topotoets/engels.html).
+Een woordjestoets Engels ↔ Nederlands (`engels.html`).
 
 - **Modus:** Woorden, Zinnen (phrases), Voorzetsels van tijd of Alles door elkaar.
 - **Richting:** Door elkaar (standaard), Engels → Nederlands of Nederlands → Engels.
