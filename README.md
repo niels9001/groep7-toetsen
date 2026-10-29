@@ -3,7 +3,7 @@
 Oefentoetsen voor groep 7:
 
 - 🧭 **TopoToets**: https://niels9001.github.io/groep7-toetsen/
-- 🌊 **TopoToets – Zeeën en gebergten**: [zeeen-en-gebergten.html](zeeen-en-gebergten.html)
+- 🌊 **TopoToets – Zeeën en gebergten**: https://groep7-toetsen.vercel.app/zeeen-en-gebergten.html
 - 🇬🇧 **English Words**: https://niels9001.github.io/groep7-toetsen/engels.html
 
 ## 🧭 TopoToets
@@ -48,7 +48,7 @@ Publiceer de branch met deze bestanden via **Settings → Pages → Deploy from 
 
 ## Vercel publiceren
 
-Alle toetsen kunnen in één Vercel-project (`groep7-toetsen`) worden gehost, elk op hun eigen URL. De productie-alias wordt na publicatie door de Vercel CLI getoond.
+Alle toetsen staan in één Vercel-project: https://groep7-toetsen.vercel.app, elk op hun eigen URL. De oorspronkelijke topotoets staat op `/`, Engels op `/engels.html` en de nieuwe variant op `/zeeen-en-gebergten.html`.
 
 Met Node.js, npm en een ingelogde Vercel CLI:
 
@@ -56,6 +56,6 @@ Met Node.js, npm en een ingelogde Vercel CLI:
 .\scripts\publish-vercel.ps1 -Scope <team-slug> -QuizPage zeeen-en-gebergten.html
 ```
 
-Commit en push eerst de wijzigingen naar GitHub. Het script weigert een vuile werkboom en uploadt alleen getrackte publieke webbestanden; `.vercel/` met de lokale projectkoppeling en gegenereerde deployment staat niet in Git. Er is geen buildstap of server nodig. De repositoryskill [toets-publiceren](.github/skills/toets-publiceren/SKILL.md) beschrijft het volledige proces voor volgende toetsen.
+Commit en push eerst de wijzigingen naar GitHub. Het script weigert een vuile werkboom en uploadt alleen publieke webbestanden; `.vercel/` met de lokale projectkoppeling, `.env*` en de gegenereerde map `public/` staan niet in Git. De verzamelstap `node scripts/build-static.cjs` kopieert uitsluitend webbestanden naar `public/`; er is geen frontendcompilatie of server nodig. `vercel.json` gebruikt dezelfde stap bij automatische deployments via de GitHub-koppeling. De repositoryskill [toets-publiceren](.github/skills/toets-publiceren/SKILL.md) beschrijft het volledige proces voor volgende toetsen.
 
 Vercel hanteert [planlimieten](https://vercel.com/docs/limits): op 29 oktober 2026 maximaal 200 projecten op Hobby, onbeperkt projecten op Pro. Gebruik, dataverkeer en deployments hebben afzonderlijke limieten; meer projecten betekent niet onbeperkt gratis gebruik.

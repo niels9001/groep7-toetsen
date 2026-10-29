@@ -25,7 +25,7 @@ description: Maak een nieuwe oefentoets of topotoets in deze repository, bewaar 
    .\scripts\publish-vercel.ps1 -Scope <team-slug> -QuizPage <bestandsnaam>.html
    ```
 
-   Het script vereist een schone Git-status, koppelt het project en maakt een statische Vercel Build Output-deployment. Het publiceert uitsluitend getrackte publieke webbestanden uit de root en ondersteunde media uit `assets/`. Skills, documentatie, tests, scripts, credentials en Git-data worden niet gehost. Voeg nieuwe assettypen bewust aan de allowlist toe als een toets die nodig heeft.
+   Het script vereist een schone Git-status, koppelt het project en maakt een statische Vercel Build Output-deployment. `scripts/build-static.cjs` verzamelt uitsluitend publieke webbestanden uit de root en ondersteunde media uit `assets/`. Skills, documentatie, tests, scripts, credentials en Git-data worden niet gehost. Voeg nieuwe assettypen bewust aan de allowlist toe als een toets die nodig heeft. `vercel.json` gebruikt dezelfde verzamelstap voor automatische deployments via de Git-koppeling.
 6. Wacht tot Vercel gereed is. Controleer de echte productie-alias uit de CLI-uitvoer, de nieuwe pagina en alle lokale afhankelijkheden zonder authenticatie. Controleer de quiz ook in de browser. Een beveiligde preview is niet hetzelfde als een publiek bereikbare toets. Verander toegangsinstellingen niet zonder toestemming.
 7. Deel de exacte live-URL en een GitHub-link naar de opgeslagen branch of commit. Noem een blokkade expliciet als een van beide niet gelukt is.
 
