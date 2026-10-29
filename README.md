@@ -3,7 +3,7 @@
 Oefentoetsen voor groep 7:
 
 - 🧭 **TopoToets**: https://niels9001.github.io/groep7-toetsen/
-- 🌊 **TopoToets – Zeeën en gebergten**: https://groep7-toetsen.vercel.app/zeeen-en-gebergten.html
+- 🌊 **TopoToets – Zeeën en gebergten**: https://harlekijn-groep7-toetsen.vercel.app/zeeen-en-gebergten.html
 - 🇬🇧 **English Words**: https://niels9001.github.io/groep7-toetsen/engels.html
 
 ## 🧭 TopoToets
@@ -19,13 +19,13 @@ Een topo-quiz met dezelfde kaart-en-antwoordenindeling. Tik op een gekleurd land
 
 ## 🌊 Zeeën en gebergten
 
-Een nieuwe variant van de TopoToets, zonder de eerdere toets te vervangen. Klik op een waterpunt of een bergketen en kies de juiste naam. Met Tab en Enter of de spatiebalk kun je de kaartlocaties ook met het toetsenbord selecteren. Zoom in voor de Ardennen, Het Kanaal en de Straat van Gibraltar.
+Een nieuwe variant van de TopoToets, zonder de eerdere toets te vervangen. Klik op een bolletje voor een water of gebergte en kies de juiste naam. Met Tab en Enter of de spatiebalk kun je de kaartlocaties ook met het toetsenbord selecteren. Zoom in voor de Ardennen, Het Kanaal en de Straat van Gibraltar. Op grote schermen vult de kaart de beschikbare ruimte naast de antwoordkolom; op mobiel staat de kaart boven de antwoorden. Er staat geen begintip boven de antwoordopties.
 
-**Zeeën en zeestraten (7):** Noordzee, Het Kanaal, Straat van Gibraltar, Middellandse Zee, Oostzee, Zwarte Zee en Kaspische Zee.
+**Wateren (7):** Noordzee, Het Kanaal, Straat van Gibraltar, Middellandse Zee, Oostzee, Zwarte Zee en Kaspische Zee.
 
 **Gebergten (5):** Pyreneeën, Ardennen, Alpen, Kaukasus en Oeral.
 
-De bergketens in `zeeen-en-gebergten.js` zijn vereenvoudigde indicatieve lijnen, geen exacte grenzen. De kaart bevat geen plaatsnamen die het antwoord verklappen. Alle 12 onderdelen tellen mee voor de score; foute pogingen bepalen de eindfeedback. Opnieuw beginnen wist de score en husselt de antwoorden.
+De bergbolletjes staan precies halverwege de lengte van de oorspronkelijke getekende berglijnen. Die vereenvoudigde lijnen blijven als bron in `zeeen-en-gebergten.js` bewaard, maar worden niet op de kaart getekend. De kaart bevat geen plaatsnamen die het antwoord verklappen. Alle 12 onderdelen tellen mee voor de score; foute pogingen bepalen de eindfeedback. Opnieuw beginnen wist de score en husselt de antwoorden.
 
 ## 🇬🇧 English Words
 
@@ -48,7 +48,7 @@ Publiceer de branch met deze bestanden via **Settings → Pages → Deploy from 
 
 ## Vercel publiceren
 
-Alle toetsen staan in één Vercel-project: https://groep7-toetsen.vercel.app, elk op hun eigen URL. De oorspronkelijke topotoets staat op `/`, Engels op `/engels.html` en de nieuwe variant op `/zeeen-en-gebergten.html`.
+Alle toetsen staan in één Vercel-project: https://harlekijn-groep7-toetsen.vercel.app, elk op hun eigen URL. De oorspronkelijke topotoets staat op `/`, Engels op `/engels.html` en de nieuwe variant op `/zeeen-en-gebergten.html`.
 
 Met Node.js, npm en een ingelogde Vercel CLI:
 

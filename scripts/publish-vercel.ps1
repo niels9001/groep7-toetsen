@@ -4,7 +4,7 @@ param(
     [ValidatePattern('^[a-z0-9][a-z0-9-]*$')]
     [string]$Scope,
     [ValidatePattern('^[a-z0-9][a-z0-9-]*$')]
-    [string]$ProjectName = 'groep7-toetsen',
+    [string]$ProjectName = 'harlekijn-groep7-toetsen',
     [ValidatePattern('^[a-z0-9][a-z0-9-]*\.html$')]
     [string]$QuizPage = 'zeeen-en-gebergten.html'
 )
