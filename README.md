@@ -3,6 +3,7 @@
 Oefentoetsen voor groep 7:
 
 - 🧭 **TopoToets**: https://niels9001.github.io/groep7-toetsen/
+- 🌊 **TopoToets – Zeeën en gebergten**: [zeeen-en-gebergten.html](zeeen-en-gebergten.html)
 - 🇬🇧 **English Words**: https://niels9001.github.io/groep7-toetsen/engels.html
 
 ## 🧭 TopoToets
@@ -15,6 +16,16 @@ Een topo-quiz met dezelfde kaart-en-antwoordenindeling. Tik op een gekleurd land
 
 **Steden:** Genève, Bern, Wenen, Milaan, Boekarest, Istanbul, Ankara, Bagdad en Teheran
 **Overig / wateren:** Po en Sicilië
+
+## 🌊 Zeeën en gebergten
+
+Een nieuwe variant van de TopoToets, zonder de eerdere toets te vervangen. Klik op een waterpunt of een bergketen en kies de juiste naam. Met Tab en Enter of de spatiebalk kun je de kaartlocaties ook met het toetsenbord selecteren. Zoom in voor de Ardennen, Het Kanaal en de Straat van Gibraltar.
+
+**Zeeën en zeestraten (7):** Noordzee, Het Kanaal, Straat van Gibraltar, Middellandse Zee, Oostzee, Zwarte Zee en Kaspische Zee.
+
+**Gebergten (5):** Pyreneeën, Ardennen, Alpen, Kaukasus en Oeral.
+
+De bergketens in `zeeen-en-gebergten.js` zijn vereenvoudigde indicatieve lijnen, geen exacte grenzen. De kaart bevat geen plaatsnamen die het antwoord verklappen. Alle 12 onderdelen tellen mee voor de score; foute pogingen bepalen de eindfeedback. Opnieuw beginnen wist de score en husselt de antwoorden.
 
 ## 🇬🇧 English Words
 
@@ -34,3 +45,17 @@ De land- en riviercontouren zijn afkomstig uit de [publiek-domeindata van Natura
 ## GitHub Pages
 
 Publiceer de branch met deze bestanden via **Settings → Pages → Deploy from a branch → / (root)**.
+
+## Vercel publiceren
+
+Alle toetsen kunnen in één Vercel-project (`groep7-toetsen`) worden gehost, elk op hun eigen URL. De productie-alias wordt na publicatie door de Vercel CLI getoond.
+
+Met Node.js, npm en een ingelogde Vercel CLI:
+
+```powershell
+.\scripts\publish-vercel.ps1 -Scope <team-slug> -QuizPage zeeen-en-gebergten.html
+```
+
+Commit en push eerst de wijzigingen naar GitHub. Het script weigert een vuile werkboom en uploadt alleen getrackte publieke webbestanden; `.vercel/` met de lokale projectkoppeling en gegenereerde deployment staat niet in Git. Er is geen buildstap of server nodig. De repositoryskill [toets-publiceren](.github/skills/toets-publiceren/SKILL.md) beschrijft het volledige proces voor volgende toetsen.
+
+Vercel hanteert [planlimieten](https://vercel.com/docs/limits): op 29 oktober 2026 maximaal 200 projecten op Hobby, onbeperkt projecten op Pro. Gebruik, dataverkeer en deployments hebben afzonderlijke limieten; meer projecten betekent niet onbeperkt gratis gebruik.

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Oefen 12 zeeën en gebergten van Europa: klik op de kaart en kies de juiste naam. Een topotoets voor groep 7.">
+  <title>TopoToets – Zeeën en gebergten – Groep 7</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cp-bg);
+      color: var(--cp-text);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem;
+      position: fixed;
+      width: 100%;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    .top-bar-left { display: flex; align-items: baseline; gap: 0.6rem; }
+    h1 { font-size: 1.5rem; color: var(--cp-accent); }
+    .subtitle { font-size: 0.9rem; color: var(--cp-text-muted); }
+    .top-bar-right { display: flex; align-items: center; gap: 0.75rem; }
+    .quiz-link { color: var(--cp-link); font-size: 0.85rem; }
+    button:focus-visible, a:focus-visible, .leaflet-interactive:focus-visible {
+      outline: 3px solid var(--cp-accent);
+      outline-offset: 3px;
+    }
+
+    .score {
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.625rem;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-size: 0.95rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .reset-btn {
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--cp-accent);
+      border-radius: 0.625rem;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .reset-btn:hover { background: var(--cp-accent-hover); transform: translateY(-1px); }
+
+    .container {
+      display: flex;
+      gap: 1.5rem;
+      max-width: 960px;
+      width: 100%;
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
+    }
+
+    .map-area {
+      flex: 1.3;
+      background: var(--cp-surface);
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 1px 2px var(--cp-border);
+      min-height: 0;
+    }
+
+    #map { width: 100%; height: 100%; background: var(--cp-border); }
+    .leaflet-control-attribution {
+      background: var(--cp-panel-strong) !important;
+      color: var(--cp-text-muted);
+      font-size: 10px;
+    }
+    .leaflet-control-attribution a { color: var(--cp-link); }
+    .leaflet-bar a, .leaflet-bar a:hover {
+      background: var(--cp-surface);
+      color: var(--cp-accent);
+      border-bottom-color: var(--cp-border);
+    }
+    .leaflet-bar a.leaflet-disabled {
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+    }
+
+    .sidebar {
+      flex: 0.7;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-height: 0;
+      max-height: 100%;
+    }
+
+    .sidebar h2 {
+      margin-top: 0.25rem;
+      font-size: 0.8rem;
+      color: var(--cp-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .scroll-area {
+      overflow-y: auto;
+      flex: 1;
+      min-height: 0;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .answer-list { display: flex; flex-direction: column; gap: 0.25rem; }
+
+    .answer-btn {
+      padding: 0.5rem 0.75rem;
+      min-height: 2.5rem;
+      font: inherit;
+      font-size: 0.9rem;
+      text-align: left;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .answer-btn:hover:not(.matched) {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent-soft);
+      transform: translateX(2px);
+    }
+
+    .answer-btn.matched {
+      background: var(--cp-success);
+      border-color: var(--cp-success);
+      color: var(--cp-accent-fg);
+      cursor: default;
+      text-decoration: line-through;
+    }
+
+    .answer-btn.wrong {
+      animation: shake 0.45s;
+      border-color: var(--cp-danger);
+      color: var(--cp-danger);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .hint {
+      padding: 0.75rem;
+      border: 1px solid var(--cp-border);
+      border-radius: 0.625rem;
+      background: var(--cp-surface);
+      font-size: 0.9rem;
+      color: var(--cp-text-muted);
+      line-height: 1.3;
+    }
+    .hint.correct { color: var(--cp-success); font-weight: 700; }
+    .hint.wrong { color: var(--cp-danger); font-weight: 700; }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      background: var(--cp-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .celebration.hidden { display: none; }
+    .confetti-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .confetti-piece {
+      position: absolute;
+      top: -12vh;
+      left: var(--x);
+      width: var(--width);
+      height: var(--height);
+      border-radius: 2px;
+      background: var(--color);
+      opacity: 0;
+      animation: confetti-fall var(--duration) linear var(--delay) forwards;
+    }
+    .celebration-card {
+      position: relative;
+      z-index: 1;
+      width: min(90vw, 520px);
+      background: var(--cp-surface);
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      text-align: center;
+      box-shadow: var(--cp-shadow);
+      animation: pop-in 0.4s ease-out;
+    }
+    .celebration-card h2 { font-size: 2rem; margin-bottom: 0.5rem; color: var(--cp-accent); }
+    .celebration-card p { font-size: 1.1rem; color: var(--cp-text-muted); margin-bottom: 1.5rem; }
+    .celebration-card .stars { font-size: 2.5rem; margin-bottom: 1rem; }
+    .result-gif {
+      display: block;
+      width: 100%;
+      max-height: 260px;
+      object-fit: contain;
+      border-radius: 12px;
+      margin: 1rem auto;
+      background: var(--cp-surface-soft);
+    }
+    .celebration-card button {
+      padding: 0.75rem 1.5rem;
+      font: inherit;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 0.625rem;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+      cursor: pointer;
+    }
+    .celebration-card button:hover { background: var(--cp-accent-hover); }
+
+    @keyframes pop-in {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translate3d(var(--drift), 115vh, 0) rotate(var(--spin));
+        opacity: 0.9;
+      }
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 0.5rem; }
+      .top-bar { flex-wrap: wrap; gap: 0.5rem; }
+      .container { flex-direction: column; gap: 0.5rem; }
+      .map-area { width: 100%; flex: none; height: 40vh; }
+      .sidebar { width: 100%; flex: 1; min-height: 0; }
+      h1 { font-size: 1.2rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .answer-btn, .reset-btn { transition: none; }
+      .answer-btn.wrong, .celebration-card { animation: none; }
+      .confetti-piece { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <h1>🧭 TopoToets</h1>
+      <span class="subtitle">Zeeën en gebergten · Groep 7</span>
+    </div>
+    <div class="top-bar-right">
+      <a class="quiz-link" href="index.html">Vorige toets</a>
+      <span class="score" id="score" aria-live="polite">⭐ Score: 0 / 12</span>
+      <button class="reset-btn" onclick="resetGame()">↻ Opnieuw</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="map-area">
+      <div id="map" role="region" aria-label="Kaart van Europa met zeven waterpunten en vijf bergketens"></div>
+    </div>
+
+    <div class="sidebar">
+      <p class="hint" id="hint" aria-live="polite"></p>
+      <div class="scroll-area">
+        <h2>🌊 Zeeën en zeestraten</h2>
+        <div class="answer-list" id="waterList"></div>
+        <h2>⛰️ Gebergten</h2>
+        <div class="answer-list" id="mountainList"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="celebration hidden" id="celebration">
+    <div class="confetti-layer" id="confetti" aria-hidden="true"></div>
+    <div class="celebration-card">
+      <div class="stars" id="stars"></div>
+      <h2 id="resultTitle">🎉 Geweldig gedaan!</h2>
+      <img
+        class="result-gif"
+        id="resultGif"
+        src="https://media.tenor.com/vedf8zRRCYQAAAAM/mr-bean-thumbs-up.gif"
+        alt=""
+        hidden
+      >
+      <p id="resultText"></p>
+      <button onclick="resetGame()">Nog een keer!</button>
+    </div>
+  </div>
+
+  <script src="basemap.js?v=1"></script>
+  <script src="zeeen-en-gebergten.js?v=1"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const allItems = [...waterItems, ...mountainItems];
+    const resultGifs = {
+      disappointed: [
+        'https://media.tenor.com/bZzADZu6H1AAAAAM/disappointed-facepalm.gif',
+        'https://i.makeagif.com/media/10-22-2024/QQs_7S.gif',
+      ],
+      positive: [
+        'https://media.tenor.com/vedf8zRRCYQAAAAM/mr-bean-thumbs-up.gif',
+        'https://gifdb.com/images/branded/high/brent-rambo-using-computer-thumbs-up-jbm6mzred30ok1n9.gif',
+      ],
+    };
+    const color = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const palette = {
+      accent: color('--cp-accent'),
+      warning: color('--cp-warning'),
+      success: color('--cp-success'),
+      danger: color('--cp-danger'),
+      surface: color('--cp-surface'),
+      border: color('--cp-border-strong'),
+    };
+
+    const MOUNTAIN_STYLES = {
+      normal:   { color: palette.accent,  weight: 5, opacity: 0.85 },
+      selected: { color: palette.warning, weight: 8, opacity: 1 },
+      matched:  { color: palette.success, weight: 6, opacity: 1 },
+      wrong:    { color: palette.danger,  weight: 8, opacity: 1 },
+    };
+    const POINT_STYLES = {
+      normal:   { color: palette.surface, fillColor: palette.accent,  weight: 2, fillOpacity: 1 },
+      selected: { color: palette.surface, fillColor: palette.warning, weight: 2, fillOpacity: 1 },
+      matched:  { color: palette.surface, fillColor: palette.success, weight: 2, fillOpacity: 1 },
+      wrong:    { color: palette.surface, fillColor: palette.danger,  weight: 2, fillOpacity: 1 },
+    };
+
+    const leafletMap = L.map('map', {
+      zoomControl: false,
+      dragging: true,
+      scrollWheelZoom: true,
+      doubleClickZoom: true,
+      boxZoom: false,
+      keyboard: true,
+      touchZoom: true,
+      zoomSnap: 0.5,
+      minZoom: 2,
+      maxZoom: 10,
+    });
+
+    L.control.zoom({
+      position: 'topright',
+      zoomInTitle: 'Inzoomen',
+      zoomOutTitle: 'Uitzoomen',
+    }).addTo(leafletMap);
+    leafletMap.attributionControl.setPrefix(false);
+    leafletMap.attributionControl.addAttribution('<a href="https://www.naturalearthdata.com/">Natural Earth</a>');
+    L.geoJSON(BASEMAP_GEOJSON, {
+      interactive: false,
+      style: { color: palette.border, weight: 0.8, fillColor: palette.surface, fillOpacity: 1 },
+    }).addTo(leafletMap);
+    leafletMap.fitBounds([[33, -10], [69, 68]], { padding: [20, 20] });
+
+    const shapeLayers = new Map();
+    const pointLayers = new Map();
+    const buttons = new Map();
+
+    L.geoJSON(MOUNTAIN_FEATURES, {
+      style: MOUNTAIN_STYLES.normal,
+      onEachFeature(feature, layer) {
+        const id = feature.properties.id;
+        shapeLayers.set(id, layer);
+        layer.on('click', () => selectLocation(id));
+      },
+    }).addTo(leafletMap);
+
+    if (mountainItems.some(item => !shapeLayers.has(item.id))) {
+      throw new Error('Kaartgegevens voor de topo-quiz ontbreken.');
+    }
+    L.geoJSON(MOUNTAIN_FEATURES, {
+      style: { color: palette.accent, weight: 18, opacity: 0 },
+      onEachFeature(feature, layer) {
+        layer.on('click', () => selectLocation(feature.properties.id));
+      },
+    }).addTo(leafletMap);
+
+    waterItems.forEach(item => {
+      const marker = L.circleMarker([item.lat, item.lng], {
+        ...POINT_STYLES.normal,
+        radius: 10,
+      }).addTo(leafletMap);
+      marker.on('click', () => selectLocation(item.id));
+      pointLayers.set(item.id, marker);
+    });
+
+    function makeKeyboardSelectable(layer, id, label) {
+      const element = layer.getElement();
+      element.setAttribute('tabindex', '0');
+      element.setAttribute('role', 'button');
+      element.setAttribute('aria-label', label);
+      element.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.stopPropagation();
+          selectLocation(id);
+        }
+      });
+    }
+
+    mountainItems.forEach((item, index) =>
+      makeKeyboardSelectable(shapeLayers.get(item.id), item.id, `Bergketen ${index + 1}`)
+    );
+    waterItems.forEach((item, index) =>
+      makeKeyboardSelectable(pointLayers.get(item.id), item.id, `Waterpunt ${index + 1}`)
+    );
+
+    function setItemStyle(id, state) {
+      const shape = shapeLayers.get(id);
+      if (shape) shape.setStyle(MOUNTAIN_STYLES[state]);
+      const point = pointLayers.get(id);
+      if (point) point.setStyle(POINT_STYLES[state]);
+    }
+
+    let selectedId = null;
+    const matchedSet = new Set();
+    let mistakes = 0;
+    let celebrationTimer = null;
+    let confettiTimer = null;
+
+    function shuffle(items) {
+      const shuffled = [...items];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    }
+
+    function randomItem(items) {
+      return items[Math.floor(Math.random() * items.length)];
+    }
+
+    function renderButtons(listId, items) {
+      const list = document.getElementById(listId);
+      list.replaceChildren();
+      shuffle(items).forEach(item => {
+        const button = document.createElement('button');
+        button.className = 'answer-btn';
+        button.textContent = item.name;
+        button.addEventListener('click', () => checkMatch(item.id));
+        list.appendChild(button);
+        buttons.set(item.id, button);
+      });
+    }
+
+    function selectLocation(id) {
+      if (matchedSet.has(id)) return;
+      if (selectedId) setItemStyle(selectedId, 'normal');
+      selectedId = id;
+      setItemStyle(id, 'selected');
+      setHint('Welk antwoord hoort bij deze plek? ✨', '');
+    }
+
+    function checkMatch(id) {
+      if (matchedSet.has(id)) return;
+      if (!selectedId) {
+        setHint('Tik eerst op een waterpunt of bergketen op de kaart!', 'wrong');
+        return;
+      }
+
+      const button = buttons.get(id);
+      if (id === selectedId) {
+        matchedSet.add(id);
+        setItemStyle(id, 'matched');
+        button.classList.add('matched');
+        button.disabled = true;
+        selectedId = null;
+        updateScore();
+        setHint('Yes, goed gevonden! 🎉', 'correct');
+        if (matchedSet.size === allItems.length) {
+          celebrationTimer = setTimeout(showCelebration, 650);
+        }
+      } else {
+        mistakes++;
+        const current = selectedId;
+        setItemStyle(current, 'wrong');
+        button.classList.add('wrong');
+        setHint('Bijna! Kijk nog eens goed op de kaart.', 'wrong');
+        setTimeout(() => {
+          if (selectedId === current && !matchedSet.has(current)) {
+            setItemStyle(current, 'selected');
+          }
+          button.classList.remove('wrong');
+        }, 500);
+      }
+    }
+
+    function updateScore() {
+      document.getElementById('score').textContent =
+        `⭐ Score: ${matchedSet.size} / ${allItems.length}`;
+    }
+
+    function setHint(text, type) {
+      const hint = document.getElementById('hint');
+      hint.textContent = text;
+      hint.className = 'hint' + (type ? ' ' + type : '');
+    }
+
+    function clearConfetti() {
+      clearTimeout(confettiTimer);
+      confettiTimer = null;
+      document.getElementById('confetti').replaceChildren();
+    }
+
+    function showConfetti() {
+      clearConfetti();
+      const confetti = document.getElementById('confetti');
+      const colors = ['var(--cp-accent)', 'var(--cp-success)', 'var(--cp-warning)', 'var(--cp-link)'];
+      const pieces = document.createDocumentFragment();
+
+      for (let i = 0; i < 90; i++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti-piece';
+        piece.style.setProperty('--x', `${Math.random() * 100}%`);
+        piece.style.setProperty('--width', `${6 + Math.random() * 7}px`);
+        piece.style.setProperty('--height', `${8 + Math.random() * 10}px`);
+        piece.style.setProperty('--color', randomItem(colors));
+        piece.style.setProperty('--duration', `${2.8 + Math.random() * 2.2}s`);
+        piece.style.setProperty('--delay', `${Math.random() * 0.8}s`);
+        piece.style.setProperty('--drift', `${-90 + Math.random() * 180}px`);
+        piece.style.setProperty('--spin', `${360 + Math.random() * 720}deg`);
+        pieces.appendChild(piece);
+      }
+
+      confetti.appendChild(pieces);
+      confettiTimer = setTimeout(clearConfetti, 6000);
+    }
+
+    function showCelebration() {
+      document.getElementById('celebration').classList.remove('hidden');
+      const isPositiveResult = mistakes < 4;
+      const stars = mistakes === 0 ? 3 : mistakes <= 3 ? 2 : 1;
+      document.getElementById('stars').textContent = '⭐'.repeat(stars);
+      document.getElementById('resultTitle').textContent =
+        isPositiveResult ? '🎉 Geweldig gedaan!' : '😅 Volgende keer beter!';
+      const resultGif = document.getElementById('resultGif');
+      resultGif.src = randomItem(
+        isPositiveResult ? resultGifs.positive : resultGifs.disappointed
+      );
+      resultGif.hidden = false;
+      resultGif.alt = isPositiveResult
+        ? 'Grappige thumbs-up als felicitatie'
+        : 'Grappige teleurgestelde reactie';
+      document.getElementById('resultText').textContent =
+        mistakes === 0
+          ? 'Alles in één keer goed! Wat een wereldkenner! 🏆'
+          : isPositiveResult
+            ? `Knap gedaan! Je had ${mistakes} foute poging${mistakes === 1 ? '' : 'en'}.`
+            : `Je had ${mistakes} foute pogingen. Volgende keer lukt het vast beter!`;
+      if (isPositiveResult) {
+        showConfetti();
+      } else {
+        clearConfetti();
+      }
+    }
+
+    function resetGame() {
+      clearTimeout(celebrationTimer);
+      celebrationTimer = null;
+      clearConfetti();
+      document.getElementById('celebration').classList.add('hidden');
+      document.getElementById('resultGif').hidden = true;
+      selectedId = null;
+      matchedSet.clear();
+      mistakes = 0;
+      buttons.clear();
+      allItems.forEach(item => setItemStyle(item.id, 'normal'));
+      renderButtons('waterList', waterItems);
+      renderButtons('mountainList', mountainItems);
+      updateScore();
+      setHint('Tik op een stip voor een zee of zeestraat, of op een lijn voor een gebergte. Kies daarna de juiste naam. Gebruik + om in te zoomen! 🌍', '');
+    }
+
+    resetGame();
+  </script>
+</body>
+</html>
