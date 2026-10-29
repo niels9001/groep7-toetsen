@@ -234,19 +234,6 @@
       40%, 80% { transform: translateX(6px); }
     }
 
-    .hint {
-      padding: 0.75rem;
-      border: 1px solid var(--cp-border);
-      border-radius: 0.625rem;
-      background: var(--cp-surface);
-      font-size: 0.9rem;
-      color: var(--cp-text-muted);
-      line-height: 1.3;
-    }
-    .hint[hidden] { display: none; }
-    .hint.correct { color: var(--cp-success); font-weight: 700; }
-    .hint.wrong { color: var(--cp-danger); font-weight: 700; }
-
     .celebration {
       position: fixed;
       inset: 0;
@@ -360,7 +347,6 @@
     </div>
 
     <div class="sidebar">
-      <p class="hint" id="hint" aria-live="polite" hidden></p>
       <div class="scroll-area">
         <h2>🌊 Wateren</h2>
         <div class="answer-list" id="waterList"></div>
@@ -530,15 +516,11 @@
       if (selectedId) setItemStyle(selectedId, 'normal');
       selectedId = id;
       setItemStyle(id, 'selected');
-      setHint('', '');
     }
 
     function checkMatch(id) {
       if (matchedSet.has(id)) return;
-      if (!selectedId) {
-        setHint('Tik eerst op een bolletje op de kaart!', 'wrong');
-        return;
-      }
+      if (!selectedId) return;
 
       const button = buttons.get(id);
       if (id === selectedId) {
@@ -548,7 +530,6 @@
         button.disabled = true;
         selectedId = null;
         updateScore();
-        setHint('Yes, goed gevonden! 🎉', 'correct');
         if (matchedSet.size === allItems.length) {
           celebrationTimer = setTimeout(showCelebration, 650);
         }
@@ -557,7 +538,6 @@
         const current = selectedId;
         setItemStyle(current, 'wrong');
         button.classList.add('wrong');
-        setHint('Bijna! Kijk nog eens goed op de kaart.', 'wrong');
         setTimeout(() => {
           if (selectedId === current && !matchedSet.has(current)) {
             setItemStyle(current, 'selected');
@@ -570,13 +550,6 @@
     function updateScore() {
       document.getElementById('score').textContent =
         `⭐ Score: ${matchedSet.size} / ${allItems.length}`;
-    }
-
-    function setHint(text, type) {
-      const hint = document.getElementById('hint');
-      hint.textContent = text;
-      hint.hidden = !text;
-      hint.className = 'hint' + (type ? ' ' + type : '');
     }
 
     function clearConfetti() {
@@ -651,7 +624,6 @@
       renderButtons('waterList', waterItems);
       renderButtons('mountainList', mountainItems);
       updateScore();
-      setHint('', '');
     }
 
     resetGame();

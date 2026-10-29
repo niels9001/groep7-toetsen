@@ -19,7 +19,7 @@ Een topo-quiz met dezelfde kaart-en-antwoordenindeling. Tik op een gekleurd land
 
 ## 🌊 Zeeën en gebergten
 
-Een nieuwe variant van de TopoToets, zonder de eerdere toets te vervangen. Klik op een bolletje voor een water of gebergte en kies de juiste naam. Met Tab en Enter of de spatiebalk kun je de kaartlocaties ook met het toetsenbord selecteren. Zoom in voor de Ardennen, Het Kanaal en de Straat van Gibraltar. Op grote schermen vult de kaart de beschikbare ruimte naast de antwoordkolom; op mobiel staat de kaart boven de antwoorden. Er staat geen begintip boven de antwoordopties.
+Een nieuwe variant van de TopoToets, zonder de eerdere toets te vervangen. Klik op een bolletje voor een water of gebergte en kies de juiste naam. Met Tab en Enter of de spatiebalk kun je de kaartlocaties ook met het toetsenbord selecteren. Zoom in voor de Ardennen, Het Kanaal en de Straat van Gibraltar. Op grote schermen vult de kaart de beschikbare ruimte naast de antwoordkolom; op mobiel staat de kaart boven de antwoorden. Er zijn geen instructie- of feedbackbanners: goede en foute antwoorden worden met kleuren op de kaart en antwoordknoppen aangegeven.
 
 **Wateren (7):** Noordzee, Het Kanaal, Straat van Gibraltar, Middellandse Zee, Oostzee, Zwarte Zee en Kaspische Zee.
 
